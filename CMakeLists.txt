@@ -73,10 +73,11 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	link_libraries("-F/Library/Frameworks/")
 endif()
 
-add_definitions(-Dlinux -D_GNU_SOURCE 
+add_definitions(-Dlinux -D_GNU_SOURCE
 	-DOSC_VERSION="${OSC_VERSION}"
 	${GIT_VERSION}
 	${GIT_COMMIT_TIMESTAMP}
+	-DPREFIX="${CMAKE_INSTALL_PREFIX}"
 	-Wall -Werror
 )
 
@@ -102,9 +103,15 @@ pkg_check_modules(MATIO REQUIRED matio)
 
 find_library(LIBIIO_LIBRARIES iio)
 find_path(LIBIIO_INCLUDE_DIRS iio.h)
+if(NOT LIBIIO_LIBRARIES)
+	pkg_check_modules(LIBIIO REQUIRED libiio)
+endif()
 
 find_library(LIBAD9361_LIBRARIES ad9361)
 find_path(LIBAD9361_INCLUDE_DIRS ad9361.h)
+if(NOT LIBAD9361_LIBRARIES)
+	pkg_check_modules(LIBAD9361 REQUIRED libad9361)
+endif()
 
 find_library(LIBSERIALPORT_LIBRARIES serialport)
 find_path(LIBSERIALPORT_INCLUDE_DIR libserialport.h)
